@@ -38,8 +38,7 @@
 
   .home-recommend-item img{
     width: 70px;
-    height: 65px;
-    border-radius: 100%;
-
+    height: 70px;
+    border-radius: 50%;
   }
 </style>
