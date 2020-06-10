@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive>
+    <keep-alive exclude="Detail">
       <router-view/>
     </keep-alive>
     <main-tab-bar class="main-tab-bar"/>
@@ -20,7 +20,7 @@ export default {
 
 <style>
   @import "assets/css/normalize.css";
-  .main-tab-bar {
-    z-index: 9;
-  }
+  /*.main-tab-bar {*/
+  /*  z-index: 9;*/
+  /*}*/
 </style>

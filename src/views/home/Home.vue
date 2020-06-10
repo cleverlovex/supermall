@@ -84,7 +84,7 @@
     },
     deactivated() {
       this.saveY = this.$refs.scroll.getScrollY()
-      console.log(this.saveY);
+      // console.log(this.saveY);
     },
     created() {
       //1.请求轮播图，推荐数据
