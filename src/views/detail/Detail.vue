@@ -19,6 +19,7 @@
 
     <detail-bottom-bar @addCart="addToCart"/>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
+<!--    <toast :message="message" :show="show"/>-->
   </div>
 </template>
 
@@ -34,11 +35,14 @@
 
   import BScroll from 'components/common/scroll/Scroll';
   import GoodsList from "components/content/goods/GoodsList";
+  // import Toast from "components/common/toast/Toast";
 
   import {getDetail, Goods, Shop, GoodsParam, getRecommend} from "network/detail";
   import Scroll from "../../components/common/scroll/Scroll";
   import {debounce} from "../../common/utils";
   import {itemListenerMixin, backTop} from "common/mixin";
+
+  import { mapActions } from 'vuex'
 
   export default {
     name: "Detail",
@@ -54,6 +58,7 @@
       DetailBottomBar,
       BScroll,
       GoodsList,
+      // Toast,
     },
     mixins: [itemListenerMixin, backTop],
     data() {
@@ -69,6 +74,8 @@
         themeTopYs: [],
         getThemeTopY: null,
         currentIndex: 0,
+        message: '',
+        show: false
       }
     },
     created() {
@@ -129,6 +136,7 @@
       }, 100)
     },
     methods: {
+      ...mapActions(['addCart']),
       imageLoad() {
         this.$refs.scroll.refresh()
         this.getThemeTopY()
@@ -169,9 +177,25 @@
         product.price = this.goods.realPrice;
         product.iid= this.iid;
 
-      //  2.将商品加入到购物车
+      //  2.将商品加入到购物车(1.promise,2.mapActions)
       //   this.$store.commit('addCart', product)
-        this.$store.dispatch('addCart', product)
+      //   this.$store.dispatch('addCart', product).then(res => {
+      //     console.log(res);
+      //     this.show = true;
+      //     this.message = res
+      //
+      //     setTimeout(() => {
+      //       this.show = false;
+      //       this.message = ''
+      //     }, 1500)
+      //
+      //   })
+
+        this.addCart(product).then(res => {
+          // console.log(res);
+          // console.log(this.$toast);
+          this.$toast.show(res)
+        })
       }
     },
     mounted() {
