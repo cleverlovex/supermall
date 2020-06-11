@@ -28,6 +28,6 @@
 
 <style scoped>
   .detail-swiper {
-    height: 500px;
+    height: 420px;
   }
 </style>

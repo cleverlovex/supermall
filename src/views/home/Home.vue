@@ -40,7 +40,7 @@
     getHomeMultidata,
     getHomeGoods
   } from "network/home";
-  import {debounce} from "../../common/utils";
+  import {itemListenerMixin, backTop} from "common/mixin";
 
   export default {
     name: "home",
@@ -54,6 +54,7 @@
       Scroll,
       BackTop
     },
+    mixins: [itemListenerMixin, backTop],
     data() {
       return {
         banners: [],
@@ -64,10 +65,9 @@
           'sell': {page: 0, list: []}
         },
         currentType: 'pop',
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY: 0
+        saveY: 0,
       }
     },
     computed: {
@@ -85,6 +85,9 @@
     deactivated() {
       this.saveY = this.$refs.scroll.getScrollY()
       // console.log(this.saveY);
+
+    //  取消全局事件的监听
+      this.$bus.$off('itemImageLoad', this.itemImgListener)
     },
     created() {
       //1.请求轮播图，推荐数据
@@ -96,14 +99,17 @@
       this.getHomeGoods('sell')
     },
     mounted() {
-      //引入防抖函数
-      const refresh = debounce(this.$refs.scroll.refresh, 200)
-      //  监听item中图片加载完成
-      this.$bus.$on('itemImageLoad', () => {
-        // console.log('------');
-        // this.$refs.scroll.refresh()
-        refresh()
-      })
+      // //引入防抖函数
+      // const refresh = debounce(this.$refs.scroll.refresh, 200)
+      //
+      // //对监听的事件进行保存
+      // this.itemImgListener = () => {
+      //   // console.log('------');
+      //   // this.$refs.scroll.refresh()
+      //   refresh()
+      // }
+      // //  监听item中图片加载完成
+      // this.$bus.$on('itemImageLoad', this.itemImgListener)
     },
     methods: {
       /**
@@ -124,12 +130,9 @@
         this.$refs.tabControl1.currentIndex = index;
         this.$refs.tabControl2.currentIndex = index;
       },
-      backClick() {
-        this.$refs.scroll.scrollTo(0, 0, 500)
-      },
       contentScroll(position) {
         //1.判断BackTop是否显示
-        this.isShowBackTop = (-position.y) > 1000
+        this.listenBackTop(position)
 
       //  2.判断tabControl是否吸顶(position: fixed)
         this.isTabFixed = (-position.y) > this.tabOffsetTop
